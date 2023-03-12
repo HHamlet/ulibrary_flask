@@ -5,12 +5,12 @@ def euclidean_algo_gcd(x, y):
 
 
 def GCD(x: int, y: int, *args: int):
-    if args != 0:
-        eag = euclidean_algo_gcd(x, y)
+    if len(args) > 0:
+        temp_gcd = euclidean_algo_gcd(x, y)
         for el in args:
-            tempdev = euclidean_algo_gcd(eag, el)
-            eag = tempdev
-        return eag
+            temp_div = euclidean_algo_gcd(temp_gcd, el)
+            temp_gcd = temp_div
+        return temp_gcd
     else:
         return euclidean_algo_gcd(x, y)
 
