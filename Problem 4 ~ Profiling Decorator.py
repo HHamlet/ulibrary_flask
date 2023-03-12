@@ -7,10 +7,11 @@ def profile(func):
         start = datetime.now()
         res = func(*args)
         duration = datetime.now() - start
-        f = open("performance.log", "w")
-        print(f"{start} - {func.__name__}{args} - {duration} \n", file=f)
+        with open("performance.log", "a") as f:
+            text = "{} - {}({}) - {} \n".format(start, func.__name__, *args, duration)
+            f.write(text)
+            f.close()
         return res
-
     return wrapper
 
 
@@ -21,3 +22,5 @@ def foo(x):
 
 
 foo(4)
+foo(5)
+foo(26)
