@@ -1,16 +1,20 @@
+"""Problem 4 -- Profiling Decorator"""
+
 from time import sleep
 from datetime import datetime
 
 
 def profile(func):
-    def wrapper(*args):
+    def wrapper(*args, **kwargs):
         start = datetime.now()
-        res = func(*args)
+        res = func(*args, **kwargs)
         duration = datetime.now() - start
         with open("performance.log", "a") as f:
-            text = "{} - {}({}) - {} \n".format(start, func.__name__, *args, duration)
+            if kwargs is None:
+                text = "{} - {}({}) - {} \n".format(start, func.__name__, *args, duration)
+            else:
+                text = "{} - {}({}, {}) - {} \n".format(start, func.__name__, *args, **kwargs, duration)
             f.write(text)
-            f.close()
         return res
     return wrapper
 
