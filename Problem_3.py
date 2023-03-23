@@ -1,3 +1,6 @@
+"""Problem 3 -- Greatest Common Divisor"""
+
+
 def euclidean_algo_gcd(x, y):
     while y:
         x, y = y, x % y
