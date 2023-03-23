@@ -8,11 +8,11 @@ def twoSum(nums: list[int], target: int) -> list[int]:
 
 def twosum_heshmap(nums: list[int], target: int):
     hashmap = {}
-    for i in range(len(nums)):
-        complement = target - nums[i]
+    for i, element in enumerate(nums):
+        complement = target - element
         if complement in hashmap:
             return [i, hashmap[complement]]
-        hashmap[nums[i]] = i
+        hashmap[element] = i
 
 
 nums = [1, 5, 3, 1, 5, 1]
