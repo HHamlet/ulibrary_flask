@@ -4,11 +4,11 @@ from typing import Any
 
 
 def find_duplicates(nums: list) -> list[Any] | None:
-    temp = []
+    temp = set()
     duplicate = set()
     for i in nums:
         if i not in temp:
-            temp.append(i)
+            temp.add(i)
         else:
             duplicate.add(i)
     if len(duplicate) == 0:
