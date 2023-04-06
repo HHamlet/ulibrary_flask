@@ -44,6 +44,10 @@ class Library:
                 csv_writer.writerow(item_dict)
 
 
+class Students:
+    pass
+
+
 book1 = Book("book1", "name1", "surname1")
 book2 = Book("book2", "name2", "surname2")
 book3 = Book("book3", "name3", "surname3")
