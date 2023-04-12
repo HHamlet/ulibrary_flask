@@ -54,6 +54,17 @@ class Library:
             for item in book_list:
                 csv_writer.writerow(item)
 
+    @classmethod
+    def request(cls, title, name, surname):
+        request_flag = False
+        for items in cls.storage:
+            if (title == items["Title"]) and (name == items["Name"]) and (surname == items["Surname"]):
+                request_flag = True
+        return request_flag
+
+    def sign_book(self):
+        pass
+
 
 class Students:
     def __init__(self, name, id, email):
@@ -81,3 +92,4 @@ lib = Library()
 # lib.display()
 Library.add_to_db(Library.storage)
 print(book1.title == book6.title)
+print(Library.request("book2", "name2", "surname2"))
