@@ -138,6 +138,12 @@ class Students:
     def __repr__(self):
         return f"Student ({self.name}, {self.email})"
 
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, other):
+        return self.name == other.name
+
 
 Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
 Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
@@ -145,7 +151,8 @@ Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
 Library.add_to_storage("The White Man's Burden", "Rudyard", "Kipling", 1899, "7894887")
 Library.add_to_storage("The Jungle Book", "Rudyard", "Kipling", 1894, "7894127")
 Library.add_to_storage("The Jungle Book", "Rudyard", "Kipling", 1894, "7894127")
-# Library.add_to_db(Library.storage)
+Library.add_to_storage("Dune", "Frank", "Herbert", 1965, "7895129")
+Library.add_to_db(Library.storage)
 # Library.storage_init()
 print(Library.storage)
 print(Library.request("War of the Worlds", "Herbert", "Wells"))
