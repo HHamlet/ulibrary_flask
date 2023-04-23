@@ -1,4 +1,4 @@
-import csv
+import json
 import random
 
 
@@ -17,26 +17,27 @@ class Author:
     def __eq__(self, other):
         return (self.name == other.name) and (self.surname == other.surname)
 
-    def new_book(self, title, year=None, isbn=None):
+    def new_book(self, title, year, isbn):
         new_book = Book(title, year, isbn)
+        if new_book in self.book:
+            new_book.add_copy()
         self.book.add(new_book)
         return new_book
 
 
 class Book:
-    def __init__(self, title, author, year=None, isbn=None):
+    def __init__(self, title, author_name, author_surname, year, isbn):
         self.title = title
-        self.author = author
+        self.author = Author(author_name, author_surname)
         self.year = year
         self.isbn = isbn
         self.copies = []
 
     def __repr__(self):
-        return f"{self.title} {self.author.name} {self.author.surname}, {self.year}, {self.isbn}"
+        return f"{self.title} , {self.year}, {self.isbn}"
 
     def add_copy(self):
-        book_copy = BookCopy(self)
-        self.copies.append(book_copy)
+        self.copies.append(BookCopy(self))
         return self.copies
 
     def __hash__(self):
@@ -57,60 +58,65 @@ class BookCopy:
 
 
 class Library:
-    storage = {}
+    storage = []
     students_list = {}
 
     @classmethod
-    def add_to_storage(cls, title, name, surname, year=None, isbn=None):
-        author = Author(name, surname)
+    def add_to_storage(cls, *args):
+        for element in args:
+            found_in_storage = False
+            for item in cls.storage:
+                if (element.title == item["title"]) and \
+                        (element.author.name == item["Author"]["name"] and
+                         element.author.surname == item["Author"]["surname"]):
+                    item["copies"] += 1
+                    found_in_storage = True
+                    break
 
-        if author not in cls.storage:
-            cls.storage[author] = {}
-
-        book = Book(title, author, year, isbn)
-
-        if book not in cls.storage[author]:
-            cls.storage[author][book] = book.copies
-        else:
-            cls.storage[author][book] = book.add_copy()
+            if not found_in_storage:
+                book_dict = {
+                    "title": element.title,
+                    "Author": {
+                        "name": element.author.name,
+                        "surname": element.author.surname,
+                    },
+                    "year": element.year,
+                    "ISBN": element.isbn,
+                    "copies": len(element.copies)
+                }
+                cls.storage.append(book_dict)
 
     @classmethod
     def storage_init(cls):
-        with open("db.csv", "r") as f:
-            fieldnames = ["name", "surname", "title", "copy"]
-            csv_read = csv.DictReader(f, fieldnames=fieldnames)
-            for row in csv_read:
-                author = Author(row["name"], row["surname"])
-                cls.storage[author] = {}
-                book = Book(row["title"], author)
-                cls.storage[author][book] = row["copy"]
+        data = Library.read_from_db()
+        for items in data:
+            book = Book(items["title"], items["Author"]["name"], items["Author"]["surname"],
+                        items["year"], items["ISBN"])
+            if items["copies"] != 0:
+                for i in range(items["copies"]):
+                    book.add_copy()
+            cls.add_to_storage(book)
         return cls.storage
 
     @staticmethod
-    def add_to_db(book_list):
-        with open("db.csv", "w") as f:
-            fieldnames = ["name", "surname", "title", "copy"]
-            csv_writer = csv.DictWriter(f, fieldnames=fieldnames)
-            for key, value in book_list.items():
-                dict_1 = {"name": key.name,
-                          "surname": key.surname
-                          }
-                for el in value:
-                    dict_2 = {"title": el,
-                              "copy": value[el]
-                              }
-                    csv_writer.writerow({"name": dict_1["name"], "surname": dict_1["surname"],
-                                         "title": dict_2["title"], "copy": dict_2["copy"]})
+    def write_to_db(book_list):
+        json_str = json.dumps(book_list, indent=2)
+        with open("db.json", "w") as file:
+            file.write(json_str)
+
+    @staticmethod
+    def read_from_db():
+        with open("db.json", "r") as file:
+            data = json.load(file)
+        return data
 
     @classmethod
     def request(cls, title, name, surname):
         request_flag = False
         for items in cls.storage:
-            if surname == items.surname and name == items.name:
-                for el in cls.storage[items]:
-                    if title == el.title:
-                        if len(el.copies) >= 1:
-                            request_flag = True
+            if title == items["title"] and (name == items["Author"]["name"] and surname == items["Author"]["surname"]):
+                if items["copies"] >= 1:
+                    request_flag = True
         return request_flag
 
     @classmethod
@@ -145,14 +151,14 @@ class Students:
         return self.name == other.name
 
 
-Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
-Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
-Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
-Library.add_to_storage("The White Man's Burden", "Rudyard", "Kipling", 1899, "7894887")
-Library.add_to_storage("The Jungle Book", "Rudyard", "Kipling", 1894, "7894127")
-Library.add_to_storage("The Jungle Book", "Rudyard", "Kipling", 1894, "7894127")
-Library.add_to_storage("Dune", "Frank", "Herbert", 1965, "7895129")
-Library.add_to_db(Library.storage)
-# Library.storage_init()
+# Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
+# Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
+# Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
+# Library.add_to_storage("The White Man's Burden", "Rudyard", "Kipling", 1899, "7894887")
+# Library.add_to_storage("The Jungle Book", "Rudyard", "Kipling", 1894, "7894127")
+# Library.add_to_storage("The Jungle Book", "Rudyard", "Kipling", 1894, "7894127")
+# Library.add_to_storage("Dune", "Frank", "Herbert", 1965, "7895129")
+# Library.add_to_db(Library.storage)
+Library.storage_init()
 print(Library.storage)
 print(Library.request("War of the Worlds", "Herbert", "Wells"))
