@@ -160,3 +160,4 @@ cython_debug/
 .idea/
 performance.log
 db.csv
+db.json
