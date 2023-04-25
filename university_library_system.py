@@ -37,7 +37,9 @@ class Book:
         return f"{self.title} , {self.year}, {self.isbn}"
 
     def add_copy(self):
-        self.copies.append(BookCopy(self))
+        book_copy = BookCopy(self)
+        self.copies.append(book_copy)
+        Library.book_object_list.append(book_copy)
         return self.copies
 
     def __hash__(self):
@@ -59,8 +61,9 @@ class BookCopy:
 
 class Library:
     storage = []
-    students_list = {}
-
+    students_list = []
+    book_object_list = []
+    students_object_list = []
     @classmethod
     def add_to_storage(cls, *args):
         for element in args:
@@ -74,6 +77,7 @@ class Library:
                     break
 
             if not found_in_storage:
+                # cls.book_object_list.append(element)
                 book_dict = {
                     "title": element.title,
                     "Author": {
@@ -95,18 +99,19 @@ class Library:
             if items["copies"] != 0:
                 for i in range(items["copies"]):
                     book.add_copy()
+
             cls.add_to_storage(book)
         return cls.storage
 
     @staticmethod
-    def write_to_db(book_list):
+    def write_to_db(book_list, filename="db.json"):
         json_str = json.dumps(book_list, indent=2)
-        with open("db.json", "w") as file:
+        with open(filename, "w") as file:
             file.write(json_str)
 
     @staticmethod
-    def read_from_db():
-        with open("db.json", "r") as file:
+    def read_from_db(filename="db.json"):
+        with open(filename, "r") as file:
             data = json.load(file)
         return data
 
@@ -120,45 +125,77 @@ class Library:
         return request_flag
 
     @classmethod
-    def students_registration(cls, name, email):
-        student = Students(name, email)
-        if student not in cls.students_list:
-            cls.students_list[student] = [student.id, student.book_current_taken]
-        else:
-            return f"{student} is registered"
-        return cls.students_list
+    def search_book(cls, title, name, surname):
+        for items in cls.book_object_list:
+            if title == items.book.title and (name == items.book.author.name and surname == items.book.author.surname):
+                if len(items.book.copies) >= 1:
+                    return items
 
     @classmethod
-    def sign_book(cls):
-        pass
+    def students_registration(cls, stud_name, stud_surname, email):
+        student = Students(stud_name, stud_surname, email)
+        if student not in cls.students_object_list:
+            student_dict = {
+                "student": {
+                    "name": student.name,
+                    "surname": student.surname,
+                    "email": student.email,
+                    "ID": student.id,
+                    "books": student.book_current_taken,
+                    "limit": student.book_limit
+                    }
+                }
+            cls.students_object_list.append(student)
+            cls.students_list.append(student_dict)
+            print(f"{student} registered")
+        else:
+            return f"{student} is registered"
+
+    @classmethod
+    def sign_book(cls, title, author_name, author_surname, stud_name, stud_surname):
+        if Library.request(title, author_name, author_surname):
+            for student in cls.students_object_list:
+                if stud_name == student.name and stud_surname == student.surname:
+                    if student.book_limit > 0:
+                        book_for_sign = cls.search_book(title, author_name, author_surname)
+                        student.book_current_taken.add(book_for_sign)
+                        book_for_sign.book.copies.remove(book_for_sign)
+                        student.book_limit -= 1
+                        print(student.book_limit)
+                        print(f"{book_for_sign} signed to {student}")
+                        return cls.students_list
+                    else:
+                        return print(f"Limit reach {student.book_limit}")
+
+        else:
+            return f"Book not available"
 
 
 class Students:
-    def __init__(self, name, email):
+    def __init__(self, name, surname, email):
         self.name = name
-        self.id = str(random.getrandbits(30))
+        self.surname = surname
+        self.id = str(random.randint(1, 5000))
         self.email = email
-        self.book_current_taken = ()
+        self.book_current_taken = set()
         self.book_limit = 5
 
     def __repr__(self):
-        return f"Student ({self.name}, {self.email})"
+        return f"Student ({self.name} {self.surname}, {self.email})"
 
     def __hash__(self):
-        return hash(self.name)
+        return hash((self.name, self.surname))
 
     def __eq__(self, other):
-        return self.name == other.name
+        return (self.name == other.name) and (self.surname == other.surname)
 
 
-# Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
-# Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
-# Library.add_to_storage("War of the Worlds", "Herbert", "Wells", 1898, "789456")
-# Library.add_to_storage("The White Man's Burden", "Rudyard", "Kipling", 1899, "7894887")
-# Library.add_to_storage("The Jungle Book", "Rudyard", "Kipling", 1894, "7894127")
-# Library.add_to_storage("The Jungle Book", "Rudyard", "Kipling", 1894, "7894127")
-# Library.add_to_storage("Dune", "Frank", "Herbert", 1965, "7895129")
-# Library.add_to_db(Library.storage)
 Library.storage_init()
-print(Library.storage)
+
 print(Library.request("War of the Worlds", "Herbert", "Wells"))
+Library.students_registration("Adam", "Smith", "adam.smith@domain.com")
+Library.students_registration("Eva", "Schneider", "eva.schneider@domain.com")
+Library.students_registration("Tom", "Sawyer", "tom.sawyer@domain.com")
+b1 = Book("War of the Worlds", "Herbert", "Wells", 1898, "789456")
+# Library.add_to_storage(b1)
+Library.sign_book("War of the Worlds", "Herbert", "Wells", "Eva", "Schneider")
