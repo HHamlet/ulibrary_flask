@@ -64,6 +64,7 @@ class Library:
     students_list = []
     book_object_list = []
     students_object_list = []
+
     @classmethod
     def add_to_storage(cls, *args):
         for element in args:
@@ -73,6 +74,8 @@ class Library:
                         (element.author.name == item["Author"]["name"] and
                          element.author.surname == item["Author"]["surname"]):
                     item["copies"] += 1
+                    book_copy = cls.search_book(element.title, element.author.name, element.author.surname)
+                    book_copy.book.add_copy()
                     found_in_storage = True
                     break
 
@@ -160,6 +163,7 @@ class Library:
                         book_for_sign = cls.search_book(title, author_name, author_surname)
                         student.book_current_taken.add(book_for_sign)
                         book_for_sign.book.copies.remove(book_for_sign)
+                        cls.book_object_list.remove(book_for_sign)
                         student.book_limit -= 1
                         print(student.book_limit)
                         print(f"{book_for_sign} signed to {student}")
@@ -191,11 +195,11 @@ class Students:
 
 
 Library.storage_init()
-
 print(Library.request("War of the Worlds", "Herbert", "Wells"))
 Library.students_registration("Adam", "Smith", "adam.smith@domain.com")
 Library.students_registration("Eva", "Schneider", "eva.schneider@domain.com")
 Library.students_registration("Tom", "Sawyer", "tom.sawyer@domain.com")
 b1 = Book("War of the Worlds", "Herbert", "Wells", 1898, "789456")
-# Library.add_to_storage(b1)
+Library.add_to_storage(b1)
 Library.sign_book("War of the Worlds", "Herbert", "Wells", "Eva", "Schneider")
+print(Library.students_list)
