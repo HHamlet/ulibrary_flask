@@ -161,3 +161,4 @@ cython_debug/
 performance.log
 db.csv
 db.json
+new.json
