@@ -30,11 +30,6 @@ class BaseModel:
 
 
 class JSONSerializer:
-    # @staticmethod
-    # def to_json(obj):
-    #     if not hasattr(obj, "to_dict"):
-    #         raise TypeError("Not serializable")
-    #     return json.dumps(obj.to_dict())
     @staticmethod
     def to_json(obj_lis):
         list_json = []
@@ -48,7 +43,6 @@ class Author(BaseModel):
     def __init__(self, name, surname):
         self.name = name
         self.surname = surname
-        # self.book = set()
 
     def __repr__(self):
         return f"{self.name},{self.surname}"
@@ -58,13 +52,6 @@ class Author(BaseModel):
 
     def __eq__(self, other):
         return (self.name == other.name) and (self.surname == other.surname)
-
-    # @classmethod
-    # def from_dict(cls, author_data):
-    #     return cls(
-    #         name=author_data["name"],
-    #         surname=author_data["surname"]
-    #     )
 
 
 class Book(BaseModel):
@@ -79,7 +66,8 @@ class Book(BaseModel):
         return f"{self.title} , {self.author}, {self.year}, {self.isbn}"
 
     def add_copy(self, book):
-        self.copies.append(book)
+        book_copy = BookCopy(book.title, book.author.name, book.author.surname, book.year, book.isbn)
+        self.copies.append(book_copy)
         return self.copies
 
     def __hash__(self):
@@ -88,31 +76,19 @@ class Book(BaseModel):
     def __eq__(self, other):
         return (self.title == other.title) and (self.author == other.author)
 
-    # @classmethod
-    # def from_dict(cls, book_data):
-    #     return cls(
-    #         title=book_data["title"],
-    #         author_name=Author.from_dict(book_data["author"]["name"]),
-    #         author_surname=Author.from_dict(book_data["author"]["surname"]),
-    #         year=book_data["year"],
-    #         isbn=book_data["isbn"]
-    #         # copies=book_data["copies"]
-    #     )
 
-
-class BookCopy(BaseModel):
-    def __init__(self, book):
-        self.book = book
-        # self.year = book.year
-        # self.isbn = book.isbn
+class BookCopy(Book):
+    def __init__(self, title, author_name, author_surname, year, isbn):
+        self.title = title
+        self.author = (author_name, author_surname)
+        self.year = year
+        self.isbn = isbn
 
     def __repr__(self):
-        return f"copy: {self.book.title}"
+        return f"copy: {self.title} , {self.author}, {self.year}, {self.isbn}"
 
 
 class Library(BaseModel):
-    # storage = []
-    # students_list = []
     book_object_list = []
     students_object_list = []
 
@@ -160,7 +136,6 @@ class Library(BaseModel):
         for items in cls.book_object_list:
             if title == items.title and (name == items.author.name and surname == items.author.surname):
                 request_flag = True
-                print(request_flag)
                 return items
         return request_flag
 
@@ -168,18 +143,7 @@ class Library(BaseModel):
     def students_registration(cls, stud_name, stud_surname, email):
         student = Students(stud_name, stud_surname, email)
         if student not in cls.students_object_list:
-            # student_dict = {
-            #     "student": {
-            #         "name": student.name,
-            #         "surname": student.surname,
-            #         "email": student.email,
-            #         "ID": student.id,
-            #         "books": student.book_current_taken,
-            #         "limit": student.book_limit
-            #         }
-            #     }
             cls.students_object_list.append(student)
-            # cls.students_list.append(student_dict)
             print(f"{student} registered")
         else:
             return f"{student} is registered"
@@ -191,18 +155,29 @@ class Library(BaseModel):
             for student in cls.students_object_list:
                 if stud_name == student.name and stud_surname == student.surname:
                     if student.book_limit > 0:
-
-                        student.book_current_taken.add(book_for_sign)
-                        book_for_sign.copies.remove(book_for_sign)
+                        student.book_current_taken.add(book_for_sign.copies[0])
+                        book_for_sign.copies.remove(book_for_sign.copies[0])
                         student.book_limit -= 1
-                        print(student.book_limit)
                         print(f"{book_for_sign} signed to {student}")
                         return cls.students_object_list
                     else:
                         return print(f"Limit reach {student.book_limit}")
-
         else:
             return f"Book not available"
+
+    @classmethod
+    def student_list_init(cls):
+        data = Library.read_from_db("student.json")
+        for items in data:
+            student = Students(items["name"], items["surname"], items["email"])
+            student.id = items["id"]
+            student.book_limit = items["book_limit"]
+            if len(items["book_current_taken"]) != 0:
+                for element in items["book_current_taken"]:
+                    book_copy = BookCopy(element["title"], element["author"][0],
+                                         element["author"][1], element["year"], element["isbn"])
+                    student.book_current_taken.add(book_copy)
+            Library.students_object_list.append(student)
 
 
 class Students(BaseModel):
@@ -232,34 +207,29 @@ class Students(BaseModel):
 # b6 = Book("The White Man's Burden", "Rudyard", "Kipling", 1899, "9780199210824")
 # b7 = Book("Dune", "Frank", "Herbert", 1965, "9780441013593")
 # Library.add_to_storage(b1, b2, b3, b4, b5, b6, b7)
-
 # Library.write_to_db(JSONSerializer.to_json(Library.book_object_list), "new.json")
 Library.storage_init()
-# for el in Library.book_object_list:
-#     print("1", type(el))
-#     print(el.copies)
+
 b8 = Book("Dune", "Frank", "Herbert", 1965, "9780441013593")
 Library.add_to_storage(b8)
-# print(Library.book_object_list)
+print(Library.book_object_list)
 
-for el in Library.book_object_list:
-    # print("2", type(el))
-    print(el.copies, len(el.copies))
-# ddd = JSONSerializer.to_json(Library.book_object_list)
+
 # Library.write_to_db(JSONSerializer.to_json(Library.book_object_list), "new.json")
-print(Library.request("The White Man's Burden", "Rudyard", "Kipling"))
-Library.students_registration("Adam", "Smith", "adam.smith@domain.com")
-Library.students_registration("Eva", "Schneider", "eva.schneider@domain.com")
-Library.students_registration("Tom", "Sawyer", "tom.sawyer@domain.com")
-print(Library.students_object_list)
-sdata = JSONSerializer.to_json(Library.students_object_list)
+# print(Library.request("The White Man's Burden", "Rudyard", "Kipling"))
+# Library.students_registration("Adam", "Smith", "adam.smith@domain.com")
+# Library.students_registration("Eva", "Schneider", "eva.schneider@domain.com")
+# Library.students_registration("Tom", "Sawyer", "tom.sawyer@domain.com")
+# print(Library.students_object_list)
+# Library.sign_book("War of the Worlds", "Herbert", "Wells", "Eva", "Schneider")
 
-Library.sign_book("War of the Worlds", "Herbert", "Wells", "Eva", "Schneider")
-
+# for el in Library.students_object_list:
+#     print(el)
+#     print(el.book_current_taken, el.book_limit)
+# for el in Library.book_object_list:
+#     print(el.copies, len(el.copies))
+# Library.write_to_db(JSONSerializer.to_json(Library.students_object_list), "student.json")
+Library.student_list_init()
 for el in Library.students_object_list:
     print(el)
     print(el.book_current_taken, el.book_limit)
-for el in Library.book_object_list:
-    print(el.copies, len(el.copies))
-    sdata = Library.to_dict(el)
-    print(type(sdata), sdata)
