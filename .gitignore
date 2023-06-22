@@ -164,4 +164,3 @@ db.json
 new.json
 student.json
 alembic.ini
-.migration/
