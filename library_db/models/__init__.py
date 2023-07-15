@@ -1,3 +1,4 @@
+from .base import BaseModel
 from .book import BookModel
 from .author import AuthorModel
 from .student import StudentModel
