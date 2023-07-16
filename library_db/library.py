@@ -11,7 +11,7 @@ class Library:
         statement = select(BookModel).where(BookModel.title == title)
         with Session(engine) as session:
             result = session.scalars(statement).first()
-            print(statement, result, type(result), result.title == title)
+            # print(statement, result, type(result), result.title == title)
         return result
 
     @classmethod
@@ -42,6 +42,23 @@ class Library:
                 session.commit()
 
                 print(statement_book, statement_author)
+
+            elif (book_res is None) and (author_res is not None):
+                statement_book = BookModel(title=title, year_first_published=year)
+                session.add(statement_book)
+                session.commit()
+                statement_book_author = BookAuthorModel(author_id=author_res.id, book_id=statement_book.id)
+                session.add(statement_book_author)
+                session.commit()
+
+            elif (book_res is not None) and (author_res is None):
+                statement_author = AuthorModel(first_name=author_name, last_name=author_surname)
+                session.add(statement_author)
+                session.commit()
+                statement_book_author = BookAuthorModel(author_id=statement_author.id, book_id=book_res.id)
+                session.add(statement_book_author)
+                session.commit()
+
             else:
                 statement_book_copies = Book_CopiesModel(book_id=book_res.id)
                 session.add(statement_book_copies)
@@ -61,7 +78,8 @@ class Library:
 # book2 = Library.select_author("Herbert", "Wells")
 # print(book1)
 # print(book2)
-Library.add_book("War of the Worlds", "Herbert", "Wells", 1898)
+# Library.add_book("War of the Worlds", "Herbert", "Wells", 1898)
+Library.add_book("I Robot", "Isaac", "Asimov", 1950)
 # Library.add_book("The White Man's Burden", "Rudyard", "Kipling", 1899)
 # Library.add_book("Dune", "Frank", "Herbert", 1965)
 # Library.add_book("Foundation", "Isaac", "Asimov", 1951)
