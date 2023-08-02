@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% set page_title = "new* book/ add book" %}
+
+{% block content %}
+<h1> Add/New Book</h1>
+<form method="POST">
+    <div class="mb-3" style="width: 400px">
+        <label for="Book-Title" class="form-label">Book Title </label>
+        <input type="text"
+               class="form-control"
+               id="book-title"
+               name="book_title"
+               placeholder="book title"
+        >
+<!--        <div id="book-title-help" class="form-text">Book full name/title</div>-->git
+    </div>
+    <div class="mb-3" style="width: 400px">
+        <label for="author-name#1" class="form-label">Author Name </label>
+        <input type="text"
+               class="form-control"
+               id="author-name#1"
+               name="author_name"
+               placeholder="first name"
+        >
+    </div>
+    <div class="mb-3" style="width: 400px">
+        <label for="author-name#2" class="form-label">Author Name </label>
+        <input type="text"
+               class="form-control"
+               id="author-name#2"
+               name="author_name"
+               placeholder="last name"
+        >
+    </div>
+    <div class="mb-3" style="width: 400px">
+        <label for="first-published-year" class="form-label">First published year </label>
+        <input type="number"
+               class="form-control"
+               id="first-published-year"
+               name="first_published_year"
+               placeholder="First published year"
+                step="1"
+        >
+    </div>
+     <div class="mb-3" style="width: 400px">
+        <label for="isbn" class="form-label">ISBN </label>
+        <input type="text"
+               class="form-control"
+               id="isbn"
+               name="isbn"
+               placeholder="isbn"
+        >
+    </div>
+    <div class="mb-3" style="width: 400px">
+        <label for="published-year" class="form-label">published year </label>
+        <input type="number"
+               class="form-control"
+               id="published-year"
+               name="published_year"
+               placeholder="published year"
+                step="1"
+        >
+    </div>
+    <br>
+    <input class="btn btn-success" type="submit" value="Add Book">
+</form>
+
+{% endblock %}
