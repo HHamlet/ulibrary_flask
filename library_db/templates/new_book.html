@@ -4,23 +4,40 @@
 
 {% block content %}
 <h1> Add/New Book</h1>
+<style>
+    form {
+    width:500px;
+    border:2px solid ;
+    margin:10px;
+    padding: 5px 50px;
+    background: #F5F5F5;
+}
+
+</style>
+
+
 <form method="POST">
+    {{ form.csrf_token }}
     <div class="mb-3" style="width: 400px">
         <label for="Book-Title" class="form-label">Book Title </label>
         <input type="text"
                class="form-control"
+               {% if form.book_title.data %}
+                value="{{ form.book_title.data }}"
+               {% endif %}
                id="book-title"
                name="book_title"
                placeholder="book title"
+               required
         >
-<!--        <div id="book-title-help" class="form-text">Book full name/title</div>-->git
+<!--        <div id="book-title-help" class="form-text">Book full name/title</div>-->
     </div>
     <div class="mb-3" style="width: 400px">
         <label for="author-name#1" class="form-label">Author Name </label>
         <input type="text"
                class="form-control"
                id="author-name#1"
-               name="author_name"
+               name="author_first_name"
                placeholder="first name"
         >
     </div>
@@ -29,7 +46,7 @@
         <input type="text"
                class="form-control"
                id="author-name#2"
-               name="author_name"
+               name="author_last_name"
                placeholder="last name"
         >
     </div>
@@ -40,7 +57,7 @@
                id="first-published-year"
                name="first_published_year"
                placeholder="First published year"
-                step="1"
+               step="1"
         >
     </div>
      <div class="mb-3" style="width: 400px">
@@ -59,7 +76,7 @@
                id="published-year"
                name="published_year"
                placeholder="published year"
-                step="1"
+               step="1"
         >
     </div>
     <br>

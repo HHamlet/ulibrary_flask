@@ -6,12 +6,22 @@ from db import engine
 
 class Library:
     @classmethod
-    def select_(cls, bookid=None):
-        if bookid is not None:
-            statement = select(BookAuthorModel).where(BookAuthorModel.book_id == bookid)
-        else:
-            statement = select(BookAuthorModel)
+    def search_by_title(cls, title):
+        statement = select(BookModel).where(BookModel.title.like("%"+title+"%"))
+        with Session(engine) as session:
+            result = session.scalars(statement).fetchall()
+        return result
+    @classmethod
+    def select_get(cls, bookid):
+        statement = select(BookAuthorModel).where(BookAuthorModel.book_id == bookid)
+        with Session(engine) as session:
+            result = session.scalars(statement).fetchall()
 
+        return result
+
+    @classmethod
+    def select_all(cls,):
+        statement = select(BookAuthorModel)
         with Session(engine) as session:
             result = session.scalars(statement).fetchall()
 
@@ -43,7 +53,7 @@ class Library:
         return result
 
     @classmethod
-    def add_book(cls, title, author_name, author_surname, year):
+    def add_book(cls, title, author_name, author_surname, year, isbn="", p_year=0):
 
         author_res = Library.select_author(author_name, author_surname)
         book_res = Library.select_book(title)
@@ -59,7 +69,7 @@ class Library:
                 session.commit()
                 statement_book_author = BookAuthorModel(author_id=statement_author.id, book_id=statement_book.id)
                 session.add(statement_book_author)
-                statement_book_copies = Book_CopiesModel(book_id=statement_book.id)
+                statement_book_copies = Book_CopiesModel(book_id=statement_book.id, isbn=isbn, year=p_year)
                 session.add(statement_book_copies)
                 session.commit()
 
@@ -70,7 +80,7 @@ class Library:
                 session.add(statement_book)
                 session.commit()
                 statement_book_author = BookAuthorModel(author_id=author_res.id, book_id=statement_book.id)
-                statement_book_copies = Book_CopiesModel(book_id=statement_book.id)
+                statement_book_copies = Book_CopiesModel(book_id=statement_book.id, isbn=isbn, year=p_year)
                 session.add(statement_book_copies)
                 session.add(statement_book_author)
 
@@ -81,7 +91,7 @@ class Library:
                 session.add(statement_author)
                 session.commit()
                 statement_book_author = BookAuthorModel(author_id=statement_author.id, book_id=book_res.id)
-                statement_book_copies = Book_CopiesModel(book_id=book_res.id)
+                statement_book_copies = Book_CopiesModel(book_id=book_res.id, isbn=isbn, year=p_year)
                 session.add(statement_book_copies)
                 session.add(statement_book_author)
                 session.commit()
@@ -109,22 +119,8 @@ class Library:
                 session.add(statement_student)
                 session.commit()
 
-# book1 = Library.select_book("The Master and Margarita")
-# book2 = Library.select_author("Herbert", "Wells")
-# print(book1)
-# print(book2)
-# Library.add_book("War of the Worlds", "Herbert", "Wells", 1898)
-# Library.add_book("I Robot", "Isaac", "Asimov", 1950)
-# Library.add_book("The White Man's Burden", "Rudyard", "Kipling", 1899)
-# Library.add_book("Dune", "Frank", "Herbert", 1965)
-# Library.add_book("Foundation", "Isaac", "Asimov", 1951)
-# Library.add_book("The Master and Margarita", "Mikhail", "Bulgakov", 1967)
-# Library.add_book("Heart of a Dog", "Mikhail", "Bulgakov", 1925)
-
 
 # Library.student_reg("Adam", "Smith", "adam.smith@gimail.com")
 # Library.student_reg("Eva", "Smith", "eva.smith@gimail.com")
 # Library.student_reg("Markus", "Gregory", "markus.gregory@yahoo.com")
 # Library.student_reg("Helga", "Peterson", "helga.peterson@outlook.com")
-r1 = Library.select_()
-print(type(r1[0]), r1[0].book.title, r1[0].author.first_name)

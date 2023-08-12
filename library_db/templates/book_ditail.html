@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2> Book Ditail </h2>
+<h2 xmlns:margin="http://www.w3.org/1999/xhtml"> Book Ditail </h2>
   <h3> ID: {{book.book.id}} </h3>
   <h3> Title: {{book.book.title}} </h3>
   <h3> Year: {{book.book.year_first_published}}</h3>
   <h3> Author: {{book.author.first_name}} {{book.author.last_name}} </h3>
+  <img src="{{ img_url }}" alt="Your Image">
 {% endblock %}
