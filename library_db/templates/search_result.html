@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% set page_title = "Result ..." %}
+
+{% block content %}
+<h1> Search result for : {{ search_title }} </h1>
+
+<h2> Books </h2>
+{% for book in books %}
+        <li><a href="/books/{{book.id}}"> {{ book.id }} - {{ book.title }}</a></li>
+    {% endfor %}
+{% endblock %}
