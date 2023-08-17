@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "macros.html" import error_display with context %}
+
+{% set page_title = "Registration Forms" %}
+
+{% block content %}
+
+<h1>Registration Form for student</h1>
+
+<form method="POST" action="/registration/students">
+    {{ form.csrf_token }}
+    <div class="mb-3" style="width: 400px;">
+        <label for="first_name" class="form-label">First Name: </label>
+        <input type="text"
+               class="form-control"
+               {% if form.first_name.data %}
+                value="{{ form.first_name.data }}"
+               {% endif %}
+               id="first_name"
+               name="first_name"
+               required
+        >
+        {{ error_display(form.first_name.errors) }}
+    </div>
+
+    <div class="mb-3" style="width: 400px;">
+        <label for="last_name" class="form-label">Last Name: </label>
+        <input type="text"
+               class="form-control"
+               {% if form.last_name.data %}
+                value="{{ form.last_name.data }}"
+               {% endif %}
+               id="last_name"
+               name="last_name"
+               required
+        >
+        {{ error_display(form.last_name.errors) }}
+    </div>
+    <div class="mb-3" style="width: 400px;">
+        <label for="email" class="form-label">Email: </label>
+        <input type="email"
+               class="form-control"
+               {% if form.email.data %}
+                value="{{ form.email.data }}"
+               {% endif %}
+               id="email"
+               name="email"
+               required
+        >
+        {{ error_display(form.email.errors) }}
+    </div>
+    <input class="btn btn-success" type="submit" value="Register">
+   <a class="btn btn-primary" href="/students" role="button" style="float:right">Students</a>
+
+
+</form>
+
+{% endblock %}
+
+

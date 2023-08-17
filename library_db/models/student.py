@@ -10,7 +10,7 @@ class StudentModel(BaseModel):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     first_name: Mapped[str] = mapped_column(String(50))
     last_name: Mapped[str] = mapped_column(String(50))
-    email: Mapped[str] = mapped_column(String(50))
+    email: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
 
     def __repr__(self):
         return f"StudentModel(id={self.id}, Student={self.first_name} {self.last_name}, email: {self.email})"

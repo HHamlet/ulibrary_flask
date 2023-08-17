@@ -4,10 +4,19 @@
 
 {% block content %}
 <br>
-<a href="/books/add_new" class="btn btn-primary">Add Book</a> <br> <br>
-<h1> Books </h1>
+<div class="container">
+    <div id="mydiv1">
+        <h1  style="text-align: center"> Books  </h1>
+             {% for book in books %}
+                   <li> <a href="/books/{{book.book.id}}"> {{ book.book.id }} - {{ book.book.title }}</a> </li>
+             {% endfor %} <br><br>
+             {% if user %}
+                <a href="/books/add_new" class="btn btn-primary" style="margin-left: 500px">Add Book</a> <br> <br>
+             {% endif%}
+             {% for i in range(1, total_pages + 1) %}
+                <a href="?page={{ i }}">{{ i }}</a>
+            {% endfor %}
 
-    {% for book in books %}
-        <li><a href="/books/{{book.book.id}}"> {{ book.book.id }} - {{ book.book.title }}</a></li>
-    {% endfor %}
+    </div>
+</div>
 {% endblock %}

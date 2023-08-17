@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% set page_title = "students" %}
+
+{% block content %}
+<br>
+<div class="container">
+    <div id="mydiv1">
+        <h1  style="text-align: center">Students</h1>
+             {% for student in students %}
+                   <li> <a href="/students/{{student.id}}"> {{ student.id }} - {{ student.first_name }}
+                          {{ student.last_name}},
+                        </a> </li>
+             {% endfor %} <br><br>
+
+             {% for i in range(1, total_pages + 1) %}
+                <a href="?page={{ i }}">{{ i }}</a>
+            {% endfor %}
+
+    </div>
+</div>
+{% endblock %}
