@@ -11,11 +11,20 @@ class Library:
         with Session(engine) as session:
             result = session.scalars(statement).fetchall()
         return result
+
     @classmethod
-    def select_get(cls, bookid):
-        statement = select(BookAuthorModel).where(BookAuthorModel.book_id == bookid)
+    def select_get(cls, book_id):
+        statement = select(BookAuthorModel).where(BookAuthorModel.book_id == book_id)
         with Session(engine) as session:
-            result = session.scalars(statement).fetchall()
+            result = session.scalars(statement).one()
+
+        return result
+
+    @classmethod
+    def select_get_book_copies(cls, book_id):
+        statement = select(Book_CopiesModel).where(Book_CopiesModel.book_id == book_id)
+        with Session(engine) as session:
+            result = session.scalars(statement).one()
 
         return result
 
@@ -23,7 +32,7 @@ class Library:
     def select_all(cls,):
         statement = select(BookAuthorModel)
         with Session(engine) as session:
-            result = session.scalars(statement).fetchall()
+            result = session.scalars(statement).all()
 
         return result
 
@@ -32,21 +41,11 @@ class Library:
         statement = select(BookModel).where(BookModel.title == title)
         with Session(engine) as session:
             result = session.scalars(statement).first()
-            # print(statement, result, type(result), result.title == title)
         return result
 
     @classmethod
     def select_author(cls, name, surname):
         statement = select(AuthorModel).where(AuthorModel.first_name == name, AuthorModel.last_name == surname)
-        with Session(engine) as session:
-            result = session.scalars(statement).first()
-            print(statement, result, type(result))
-        return result
-
-    @classmethod
-    def select_student(cls, name, surname):
-
-        statement = select(StudentModel).where(StudentModel.first_name == name, StudentModel.last_name == surname)
         with Session(engine) as session:
             result = session.scalars(statement).first()
             print(statement, result, type(result))
@@ -107,20 +106,43 @@ class Library:
         pass
 
     @classmethod
-    def sign_to(cls):
+    def update_entity(cls):
         pass
 
     @classmethod
+    def sign_to(cls):
+        pass
+
+
+class Students:
+    @classmethod
+    def select_student(cls, name, surname):
+        statement = select(StudentModel).where(StudentModel.first_name == name, StudentModel.last_name == surname)
+        with Session(engine) as session:
+            result = session.scalars(statement).first()
+            print(statement, result, type(result))
+        return result
+
+    @classmethod
     def student_reg(cls, stu_name, stu_surname, stu_email):
-        student_res = Library.select_student(stu_name, stu_surname)
+        student_res = Students.select_student(stu_name, stu_surname)
         if student_res is None or (student_res is not None and student_res.email != stu_email):
             with Session(engine, expire_on_commit=False) as session:
                 statement_student = StudentModel(first_name=stu_name, last_name=stu_surname, email=stu_email)
                 session.add(statement_student)
                 session.commit()
+                print(statement_student)
+
+    @classmethod
+    def select_all(cls, ):
+        statement = select(StudentModel)
+        with Session(engine) as session:
+            result = session.scalars(statement).all()
+        return result
+
+    @classmethod
+    def delete_student_entity(cls):
+        pass
 
 
-# Library.student_reg("Adam", "Smith", "adam.smith@gimail.com")
-# Library.student_reg("Eva", "Smith", "eva.smith@gimail.com")
-# Library.student_reg("Markus", "Gregory", "markus.gregory@yahoo.com")
-# Library.student_reg("Helga", "Peterson", "helga.peterson@outlook.com")
+print(Students.select_all()[1].id)
