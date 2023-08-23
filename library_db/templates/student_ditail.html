@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% set page_title = "Student Ditail" %}
+
+{% block content %}
+<div id="mydiv1">
+  <h2>  Student Ditail </h2>
+  <h3> ID: {{student.id}} </h3>
+  <h3> First name:  {{student.first_name}} </h3>
+  <h3> Last name:  {{student.last_name}}</h3>
+  <h3> Email:  {{student.email}} </h3>
+  <div>
+    <br>
+  </div>
+  <form method="POST">
+    <input  class="btn btn btn-success" type="submit" value="Change" name="change"/>
+    <input  class="btn btn-danger" type="submit" value="Delete" name="del"/>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% set page_title = "Update form" %}
+{% block content %}
+<h1>Update Information</h1>
+    <form action="/update" method="POST">
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="ID" value={{student.id}} readonly><br><br>
+        <label for="new_first_name">New Fist Name:</label>
+        <input type="text" id="new_first_name" name="new_first_name" value={{student.first_name}}><br><br>
+
+        <label for="new_last_name">New Last Name:</label>
+        <input type="text" id="new_last_name" name="new_last_name" value={{student.last_name}}><br><br>
+
+        <label for="new_email">New Email:</label>
+        <input type="email" id="new_email" name="new_email" value={{student.email}}><br><br>
+
+        <input class="btn btn btn-success" type="submit" value="Update">
+    </form>
+{% endblock %}
