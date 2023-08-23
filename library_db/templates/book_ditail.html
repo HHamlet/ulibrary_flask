@@ -1,16 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% for book_copies in book_copy_data %}
 <div id="mydiv1">
-<h2 xmlns:margin="http://www.w3.org/1999/xhtml"> Book Ditail </h2>
+<h2> Book Ditail </h2>
   <h3> ID: {{book.book.id}} </h3>
   <h3> Title: {{book.book.title}} </h3>
   <h3> Year: {{book.book.year_first_published}}</h3>
   <h3> Author: {{book.author.first_name}} {{book.author.last_name}} </h3>
-  <h3> ISBN: {{book_copy_data.isbn}}  </h3>
-  <h3> Publisher published: {{book_copy_data.year}}  </h3>
-  <img src="{{ img_url }}" alt="Your Image">
+
+      <h3> ISBN: {{book_copies.isbn}}  </h3>
+      <h3> Publisher published: {{book_copies.year}}  </h3>
+
+      <img src="{{ img_url }}" alt="Your Image">
+
 </div>
+  {% endfor%}
+{% if user %}
+    <h4> Copies : {{copies_count}}</h4>
+  {%endif%}
 <div>
   <br>
   <h5> Additional Info:</h5> <br>
