@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy import select
 from models import BookModel, AuthorModel, BookAuthorModel, Book_CopiesModel, BorrowsModel, StudentModel, BaseModel
 from db import engine
@@ -24,7 +24,7 @@ class Library:
     def select_get_book_copies(cls, book_id):
         statement = select(Book_CopiesModel).where(Book_CopiesModel.book_id == book_id)
         with Session(engine) as session:
-            result = session.scalars(statement).one()
+            result = session.scalars(statement).all()
 
         return result
 
@@ -56,7 +56,6 @@ class Library:
 
         author_res = Library.select_author(author_name, author_surname)
         book_res = Library.select_book(title)
-
         with Session(engine, expire_on_commit=False) as session:
 
             if (book_res is None) and (author_res is None):
@@ -72,7 +71,7 @@ class Library:
                 session.add(statement_book_copies)
                 session.commit()
 
-                print(statement_book, statement_author)
+                print(statement_book, statement_author, "1")
 
             elif (book_res is None) and (author_res is not None):
                 statement_book = BookModel(title=title, year_first_published=year)
@@ -82,7 +81,7 @@ class Library:
                 statement_book_copies = Book_CopiesModel(book_id=statement_book.id, isbn=isbn, year=p_year)
                 session.add(statement_book_copies)
                 session.add(statement_book_author)
-
+                print("2")
                 session.commit()
 
             elif (book_res is not None) and (author_res is None):
@@ -93,13 +92,14 @@ class Library:
                 statement_book_copies = Book_CopiesModel(book_id=book_res.id, isbn=isbn, year=p_year)
                 session.add(statement_book_copies)
                 session.add(statement_book_author)
+                print("3")
                 session.commit()
 
             else:
-                statement_book_copies = Book_CopiesModel(book_id=book_res.id)
+                statement_book_copies = Book_CopiesModel(book_id=book_res.id, isbn=isbn, year=p_year)
                 session.add(statement_book_copies)
                 session.commit()
-                print(statement_book_copies)
+                print(statement_book_copies, "4")
 
     @classmethod
     def del_db(cls):
@@ -141,8 +141,9 @@ class Students:
         return result
 
     @classmethod
-    def delete_student_entity(cls):
-        pass
-
-
-print(Students.select_all()[1].id)
+    def delete_student_entity(cls, student_id):
+        db_session = sessionmaker(bind=engine)
+        student_sessions = db_session()
+        student_del = student_sessions.query(StudentModel).get(int(student_id))
+        student_sessions.delete(student_del)
+        student_sessions.commit()

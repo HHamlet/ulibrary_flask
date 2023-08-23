@@ -1,9 +1,9 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy import select
 from db import engine
 from flask import Flask, render_template, redirect, request, url_for, session
 from library import Library, Students
-from models import BookModel, BookAuthorModel, UserModel, StudentModel
+from models import BookModel, BookAuthorModel, UserModel, StudentModel, Book_CopiesModel
 from forms import CreateBookForm, LoginForm, AdminRegisterForm, StudentRegisterForm
 from login import login_required
 import requests
@@ -50,12 +50,14 @@ def list_book():
 def book_ditail(book_id):
     book_data = Library.select_get(book_id)
     book_copy_data = Library.select_get_book_copies(book_id)
-    r = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={book_copy_data.isbn}'
-                     f'&key=AIzaSyDHSdWAbF5rMzG4LhNnDwmhvET1dtRXDYo')
-    description_by_api = r.json()["items"][0]
-    img_url = url_for('static', filename=f'/picture/id_{book_id}.jpeg')
-    return render_template("book_ditail.html", book=book_data, img_url=img_url, book_copy_data=book_copy_data,
-                           description=description_by_api)
+    copies_count = Session(engine).query(Book_CopiesModel).where(Book_CopiesModel.book_id == book_id).count()
+    for el in book_copy_data:
+        r = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={[el.isbn]}'
+                                f'&key=AIzaSyDHSdWAbF5rMzG4LhNnDwmhvET1dtRXDYo')
+        description_by_api = r.json()["items"][0]
+        img_url = url_for('static', filename=f'/picture/id_{book_id}.jpeg')
+        return render_template("book_ditail.html", book=book_data, img_url=img_url, book_copy_data=book_copy_data,
+                               description=description_by_api, copies_count=copies_count)
 
 
 @app.route("/books/add_new", methods=["GET", "POST"])
@@ -96,8 +98,8 @@ def registration_students():
     return render_template("reg_students.html", form=form)
 
 
-@login_required
 @app.route("/students")
+@login_required
 def list_students():
     item_per_page = 10
 
@@ -107,6 +109,47 @@ def list_students():
     students = Session(engine).scalars(select(StudentModel).limit(item_per_page).offset(offset)).fetchall()
 
     return render_template("students.html", students=students, total_pages=total_pages)
+
+
+@app.route("/students/<student_id>", methods=["GET", "POST"])
+@login_required
+def student_ditail(student_id):
+    student = Session(engine).query(StudentModel).get(int(student_id))
+    if request.method == "POST":
+        if request.form.get("change"):
+            print("Change button is pressed !!!!!!")
+            print("===============================")
+            return redirect(url_for(".update_form", student_id=student.id))
+        elif request.form.get("del"):
+            Students.delete_student_entity(student_id)
+            return redirect("/students")
+
+    return render_template("student_ditail.html", student=student)
+
+
+@app.route('/update-form')
+def update_form():
+    student_id = request.args.get("student_id")
+    student = Session(engine).query(StudentModel).get(int(student_id))
+    print("REQUEST: ", request.args.get("student_id"))
+    return render_template('update_form.html', student=student)
+
+
+@app.route('/update', methods=['POST'])
+def update_info():
+    student_id = request.form['ID']
+    new_firs_name = request.form['new_first_name']
+    new_last_name = request.form['new_last_name']
+    new_email = request.form['new_email']
+
+    session_db = sessionmaker(bind=engine)()
+    student = session_db.query(StudentModel).filter_by(id=student_id).first()
+    student.first_name = new_firs_name
+    student.last_name = new_last_name
+    student.email = new_email
+    session_db.commit()
+
+    return redirect("/students")
 
 
 @app.route("/search_result")
