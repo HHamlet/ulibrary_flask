@@ -1,24 +1,44 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% for book_copies in book_copy_data %}
-<div id="mydiv1">
-<h2> Book Ditail </h2>
-  <h3> ID: {{book.book.id}} </h3>
-  <h3> Title: {{book.book.title}} </h3>
-  <h3> Year: {{book.book.year_first_published}}</h3>
-  <h3> Author: {{book.author.first_name}} {{book.author.last_name}} </h3>
+<div class="container1">
+        <div class="box">
+            <div class="box-row">
+                <div class="box-cell box1">
+                    <div id="mydiv1">
+                        <h2> Book Ditail </h2>
+                          <h3> ID: {{book.book.id}} </h3>
+                          <h3> Title: {{book.book.title}} </h3>
+                          <h3> Year: {{book.book.year_first_published}}</h3>
+                          <h3> Author: {{book.author.first_name}} {{book.author.last_name}} </h3>
+                        {% if user %}
 
-      <h3> ISBN: {{book_copies.isbn}}  </h3>
-      <h3> Publisher published: {{book_copies.year}}  </h3>
+                            <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="reset" data-bs-toggle="dropdown" aria-expanded="true">
+                                ISBN list
+                            </button>
 
-      <img src="{{ img_url }}" alt="Your Image">
+                            <ul class="dropdown-menu">
+                              {% for book_copies in book_copy_data %}
+                                <li>ISBN: {{book_copies.isbn}}    published: {{book_copies.year}}</li>
+                              {% endfor%}
 
+                            </ul>
+                            <a href="#" class="btn btn-primary" style="margin-left: 0px">Sign book to</a>
+                            <h4> Copies : {{copies_count}}</h4>
+                            </div>
+                        {%endif%}
+                    </div>
+                </div>
+                <div class="box-cell box2">
+                    <img src="{{ img_url }}" alt="Your Image">
+                </div>
+            </div>
+        </div>
 </div>
-  {% endfor%}
-{% if user %}
-    <h4> Copies : {{copies_count}}</h4>
-  {%endif%}
+
+
+
 <div>
   <br>
   <h5> Additional Info:</h5> <br>
