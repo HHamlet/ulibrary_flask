@@ -1,6 +1,7 @@
+import datetime
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy import select
-from models import BookModel, AuthorModel, BookAuthorModel, Book_CopiesModel, BorrowsModel, StudentModel, BaseModel
+from models import BookModel, AuthorModel, BookAuthorModel, Book_CopiesModel, BorrowsModel, StudentModel
 from db import engine
 
 
@@ -110,8 +111,17 @@ class Library:
         pass
 
     @classmethod
-    def sign_to(cls):
-        pass
+    def sign_to(cls, bookcopiesid, studentid):
+        book = select(Book_CopiesModel).where(Book_CopiesModel.id == bookcopiesid)
+        student = select(StudentModel).where(StudentModel.id == studentid)
+        with Session(engine, expire_on_commit=False) as session:
+            book_to_sign = session.scalars(book).first()
+            sign_to_student = session.scalars(student).first()
+            statement_borrow = BorrowsModel(book_copies_id=book_to_sign.id, student_id=sign_to_student.id,
+                                            borrowed_data=datetime.date.today())
+            statement_borrow.return_data = statement_borrow.borrowed_data + datetime.timedelta(14)
+            session.add(statement_borrow)
+            session.commit()
 
 
 class Students:
