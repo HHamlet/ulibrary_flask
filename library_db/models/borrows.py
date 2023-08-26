@@ -18,5 +18,5 @@ class BorrowsModel(BaseModel):
     student: Mapped[StudentModel] = relationship(lazy="joined")
 
     def __repr__(self):
-        return f"Book_CopiesModel(id={self.id},Student={self.student} Book={self.book_copies}, " \
+        return f"BorrowsModel(id={self.id},Student={self.student} Book={self.book_copies}, " \
                f"Borrowed={self.borrowed_data}, return={self.return_data})"
