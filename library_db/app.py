@@ -183,5 +183,16 @@ def logout():
     return redirect("/login")
 
 
+@app.route("/borrow", methods=["GET", "POST"])
+@login_required
+def borrow():
+    if request.method == "POST":
+        bookcopies_id = request.form["bookcopies_id"]
+        student_id = request.form["student_id"]
+        if bookcopies_id and student_id:
+            Library.sign_to(bookcopies_id, student_id)
+    return render_template("borrow.html")
+
+
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
