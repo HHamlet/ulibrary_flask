@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en" >
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,11 +22,15 @@
     <nav>
         <a href="/">Home</a>
         <a href="/books">Books</a>
+        {% if  user %}
+            <a href="/students" >Students</a>
+            <a href="/borrow" >Borrow</a>
+        {%endif%}
         <a href="#" onclick="myFunction()">Search</a>
 
         <a href="/about">About Us</a>
 
-        <div style="float:right">
+        <div class="r_corner">
         {% if not user %}
             <a href="{{ url_for('login', next=request.path) }}">Login</a>
 

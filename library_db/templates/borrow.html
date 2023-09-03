@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% set page_title = "Borrow" %}
+
+{% block content %}
+
+    <div class="main-container">
+
+        <div class="container_b">
+            <form >
+                <div class="mb-3">
+                    <label for="title" class="form-label">Search by</label>
+                    <input type="text"
+                           class="form-control"
+                           id="title"
+                           name="title"
+                           placeholder="title"
+                           required
+                    >
+                </div>
+                <input class="btn btn-success" type="submit" value="Search" style="margin: auto">
+            </form>
+
+        </div>
+<!--        <div class="container_a">-->
+<!--            <img class="image" src="./static/picture/my_library.jpg"  alt="...">-->
+
+<!--        </div>-->
+        <div class="container_b">
+            <form >
+            <div class="mb-3">
+                <label for="student" class="form-label">Search by</label>
+                <input type="text"
+                       class="form-control"
+                       id="student"
+                       name="student"
+                       placeholder="student name"
+                       required
+                >
+            </div>
+            <input class="btn btn-success" type="submit" value="Search" style="margin: auto">
+        </form>
+
+        </div>
+
+    </div>
+    <div class="main-container">
+
+        <form method="POST">
+            <div class="container_b">
+                <label for="bookcopies_id" class="form-label">Sign Book to...</label>
+                <input type="text"
+                           class="form-control"
+                           id="bookcopies_id"
+                           name="bookcopies_id"
+                           placeholder="Book Copies Id"
+                           required
+                    >
+                <input type="text"
+                           class="form-control"
+                           id="student_id"
+                           name="student_id"
+                           placeholder="Student Id"
+                           required
+                    ><br>
+                <input type="submit" class="btn btn-secondary" value="Sign">
+            </div>
+
+<!--                <div class="container_a">-->
+<!--                    <img class="image" src="./static/picture/my_library.jpg"  alt="...">-->
+
+<!--                </div>-->
+            <div class="container_b">
+                <label for="return_bookcopies_id" class="form-label">Return Book ftom...</label>
+                <input type="text"
+                           class="form-control"
+                           id="return_bookcopies_id"
+                           name="return_bookcopies_id"
+                           placeholder="Book Copies Id"
+                           required
+                    >
+                <input type="text"
+                           class="form-control"
+                           id="return_student_id"
+                           name="return_student_id"
+                           placeholder="Student Id"
+                           required
+                    ><br>
+                <input type="submit" class="btn btn-secondary" value="Return">
+
+            </div>
+        </form>
+    </div>
+{% endblock %}
