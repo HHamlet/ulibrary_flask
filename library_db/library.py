@@ -112,16 +112,42 @@ class Library:
 
     @classmethod
     def sign_to(cls, bookcopiesid, studentid):
-        book = select(Book_CopiesModel).where(Book_CopiesModel.id == bookcopiesid)
-        student = select(StudentModel).where(StudentModel.id == studentid)
+        book = None
+        student = None
+        if Library.check_book_in_borrow_table(bookcopiesid) is not True:
+            book = select(Book_CopiesModel).where(Book_CopiesModel.id == bookcopiesid)
+        if len(Library.student_taken_book(studentid)) <= 5:
+            student = select(StudentModel).where(StudentModel.id == studentid)
+
+        if book and student:
+            with Session(engine, expire_on_commit=False) as session:
+                book_to_sign = session.scalars(book).first()
+                sign_to_student = session.scalars(student).first()
+                statement_borrow = BorrowsModel(book_copies_id=book_to_sign.id, student_id=sign_to_student.id,
+                                                borrowed_data=datetime.date.today())
+                statement_borrow.return_data = statement_borrow.borrowed_data + datetime.timedelta(14)
+                session.add(statement_borrow)
+                session.commit()
+                return True
+        else:
+            print("book or student are not available")
+            return False
+    @staticmethod
+    def check_book_in_borrow_table(book_id):
+        borrowed_book = select(BorrowsModel).where(BorrowsModel.book_copies_id == book_id)
         with Session(engine, expire_on_commit=False) as session:
-            book_to_sign = session.scalars(book).first()
-            sign_to_student = session.scalars(student).first()
-            statement_borrow = BorrowsModel(book_copies_id=book_to_sign.id, student_id=sign_to_student.id,
-                                            borrowed_data=datetime.date.today())
-            statement_borrow.return_data = statement_borrow.borrowed_data + datetime.timedelta(14)
-            session.add(statement_borrow)
-            session.commit()
+            result = session.scalars(borrowed_book).first()
+            print(result)
+        if result is not None:
+            return True
+        return False
+
+    @staticmethod
+    def student_taken_book(student_id):
+        taken_book = select(BorrowsModel).where(BorrowsModel.student_id == student_id)
+        with Session(engine, expire_on_commit=False) as session:
+            result = session.scalars(taken_book).fetchall()
+        return result
 
 
 class Students:
@@ -157,3 +183,6 @@ class Students:
         student_del = student_sessions.query(StudentModel).get(int(student_id))
         student_sessions.delete(student_del)
         student_sessions.commit()
+
+
+Library.sign_to(178,3)
