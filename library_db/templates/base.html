@@ -31,13 +31,12 @@
         <a href="/about">About Us</a>
 
         <div class="r_corner">
-        {% if not user %}
-            <a href="{{ url_for('login', next=request.path) }}">Login</a>
-
-        {% else %}
+            {% if not user %}
+                <a href="{{ url_for('login', next=request.path) }}">Login</a>
+            {% else %}
             {{ user.user_name }}
             <a href="/logout" >Logout</a>
-            <div class="dropdown">
+            <div>
               <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Registration
               </button>
@@ -46,13 +45,13 @@
                 <li><a class="dropdown-item" href="/registration/students">Students Registration</a></li>
               </ul>
             </div>
-        {% endif %}
+            {% endif %}
         </div>
     </nav>
-    <section>
-<!--        <h2>Welcome to the University Library</h2>-->
 
-    </section>
+    {% block content %}
+            <h2>Under construction</h2>
+    {% endblock %}
     <div id="myDIV">
         <form action="/search_result">
             <div class="mb-3">
@@ -68,10 +67,6 @@
             <input class="btn btn-success" type="submit" value="Search" style="margin: auto">
         </form>
         </div>
-    {% block content %}
-            <h2>Under construction</h2>
-    {% endblock %}
-
     <br><br><br>
     <footer>
         <p>&copy; 2023 University Library. All rights reserved.</p>

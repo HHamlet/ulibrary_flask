@@ -3,11 +3,11 @@
 {% set page_title = "Borrow" %}
 
 {% block content %}
-
+<section>
     <div class="main-container">
 
-        <div class="container_b">
-            <form >
+        <div class="container_a">
+            <form id="form1">
                 <div class="mb-3">
                     <label for="title" class="form-label">Search by</label>
                     <input type="text"
@@ -20,75 +20,86 @@
                 </div>
                 <input class="btn btn-success" type="submit" value="Search" style="margin: auto">
             </form>
-
         </div>
-<!--        <div class="container_a">-->
-<!--            <img class="image" src="./static/picture/my_library.jpg"  alt="...">-->
 
-<!--        </div>-->
-        <div class="container_b">
-            <form >
-            <div class="mb-3">
-                <label for="student" class="form-label">Search by</label>
-                <input type="text"
+        <div class="container_a">
+            <form id="form2">
+                <div class="mb-3">
+                    <label for="student_fname" class="form-label">Search by</label>
+                    <input type="text"
                        class="form-control"
-                       id="student"
-                       name="student"
-                       placeholder="student name"
+                       id="student_fname"
+                       name="student_fname"
+                       placeholder="first name"
                        required
-                >
-            </div>
-            <input class="btn btn-success" type="submit" value="Search" style="margin: auto">
-        </form>
-
+                    >
+                    <input type="text"
+                       class="form-control"
+                       id="student_lname"
+                       name="student_lname"
+                       placeholder="last name"
+                       required
+                    >
+                </div>
+                <input class="btn btn-success" type="submit" value="Search" style="margin: auto">
+            </form>
         </div>
-
-    </div>
-    <div class="main-container">
-
-        <form method="POST">
-            <div class="container_b">
-                <label for="bookcopies_id" class="form-label">Sign Book to...</label>
-                <input type="text"
+        <div class="container_a">
+            {%if book_copies%}
+                {%for book_c in book_copies%}
+                    <h6>Book copies id: {{book_c.id}}</h6>
+                    <h6>Book copies ISBN: {{book_c.isbn}}</h6>
+                    <h6>Book copies title: {{book_c.book.title}}</h6>
+                {%endfor%}
+            {%endif%}
+        </div>
+        <div class="container_a">
+            {%if student%}
+                <h6>Student ID: {{student.id}}</h6>
+                <h6>Student : {{student.first_name}} {{student.last_name}} {{student.email}}</h6>
+            {%endif%}
+        </div>
+        <div class="container_a">
+                <form method="POST" id="form3">
+                    <label for="bookcopies_id" class="form-label">Sign Book to...</label>
+                    <input type="text"
                            class="form-control"
                            id="bookcopies_id"
                            name="bookcopies_id"
                            placeholder="Book Copies Id"
                            required
                     >
-                <input type="text"
+                    <input type="text"
                            class="form-control"
                            id="student_id"
                            name="student_id"
                            placeholder="Student Id"
                            required
                     ><br>
-                <input type="submit" class="btn btn-secondary" value="Sign">
+                    <input type="submit" class="btn btn-secondary" value="Sign">
+                </form>
             </div>
 
-<!--                <div class="container_a">-->
-<!--                    <img class="image" src="./static/picture/my_library.jpg"  alt="...">-->
-
-<!--                </div>-->
-            <div class="container_b">
+        <div class="container_a">
+            <form method="POST" id="form4">
                 <label for="return_bookcopies_id" class="form-label">Return Book ftom...</label>
                 <input type="text"
-                           class="form-control"
-                           id="return_bookcopies_id"
-                           name="return_bookcopies_id"
-                           placeholder="Book Copies Id"
-                           required
-                    >
+                       class="form-control"
+                       id="return_bookcopies_id"
+                       name="return_bookcopies_id"
+                       placeholder="Book Copies Id"
+                       required
+                >
                 <input type="text"
-                           class="form-control"
-                           id="return_student_id"
-                           name="return_student_id"
-                           placeholder="Student Id"
-                           required
-                    ><br>
+                       class="form-control"
+                       id="return_student_id"
+                       name="return_student_id"
+                       placeholder="Student Id"
+                       required
+                ><br>
                 <input type="submit" class="btn btn-secondary" value="Return">
-
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
+</section>
 {% endblock %}
