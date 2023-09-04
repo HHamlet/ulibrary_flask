@@ -186,12 +186,36 @@ def logout():
 @app.route("/borrow", methods=["GET", "POST"])
 @login_required
 def borrow():
+    student = ""
+    book_copies = ""
+
+    if request.method == "GET":
+        title = request.args.get("title")
+        print("Title : ", title)
+
+        student_first_name = request.args.get("student_fname")
+        student_last_name = request.args.get("student_lname")
+
+        if student_first_name and student_last_name:
+            print("Student F.name : ", student_first_name)
+            print("Student L.name : ", student_last_name)
+            student = Students.select_student(student_first_name, student_last_name)
+            print("Student : ", student)
+        if title:
+            print("Title : ", title)
+            book = Library.select_book(title)
+            if book:
+                book_copies = Library.select_get_book_copies(book.id)
+                print("Book Copies : ", book_copies)
+
     if request.method == "POST":
         bookcopies_id = request.form["bookcopies_id"]
         student_id = request.form["student_id"]
+
         if bookcopies_id and student_id:
             Library.sign_to(bookcopies_id, student_id)
-    return render_template("borrow.html")
+
+    return render_template("borrow.html", student=student, book_copies=book_copies)
 
 
 if __name__ == "__main__":
