@@ -119,7 +119,7 @@ class Library:
         if len(Library.student_taken_book(studentid)) <= 5:
             student = select(StudentModel).where(StudentModel.id == studentid)
 
-        if book and student:
+        if book is not None and student is not None:
             with Session(engine, expire_on_commit=False) as session:
                 book_to_sign = session.scalars(book).first()
                 sign_to_student = session.scalars(student).first()
@@ -132,6 +132,7 @@ class Library:
         else:
             print("book or student are not available")
             return False
+
     @staticmethod
     def check_book_in_borrow_table(book_id):
         borrowed_book = select(BorrowsModel).where(BorrowsModel.book_copies_id == book_id)
@@ -170,7 +171,7 @@ class Students:
                 print(statement_student)
 
     @classmethod
-    def select_all(cls, ):
+    def select_all(cls):
         statement = select(StudentModel)
         with Session(engine) as session:
             result = session.scalars(statement).all()
@@ -183,6 +184,3 @@ class Students:
         student_del = student_sessions.query(StudentModel).get(int(student_id))
         student_sessions.delete(student_del)
         student_sessions.commit()
-
-
-Library.sign_to(178,3)
