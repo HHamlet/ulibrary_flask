@@ -1,114 +1,89 @@
 body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #007bff;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-        }
-        nav {
-            background-color: #f4f4f4;
-            padding: 0.5rem;
-            text-align: center;
-        }
-        nav a {
-            color: #000;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-        }
-        nav a:hover {
-            background-color: #007bff;
-            color: #fff;
-        }
-        section {
-            padding: 2rem;
-        }
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-        }
-      #myDIV {
-          width: 50%;
-          padding: 50px 50px;
-          text-align: center;
-          background-color: lightblue;
-          margin-top: 20px;
-          margin: auto;
-          display: none;
-        }
-
-      .book_img {
-         top: 30%;
-         left: 40%;
-         margin-top: -280px;
-         margin-left: 650px;
-         height: 400px;
-         width: 250px;
-        }
-        .container {
-            margin: 2rem auto;
-            max-width: 800px;
-            padding: 2rem;
-            background-color: #fff;
-            border: 2px solid #ccc;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        #mydiv1 {
-        margin-left: 50px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
     }
-
-    .container1 .box {
-          position: relative;
-          display : flex;
-          flex-direction : row;
-          left : 0px;
-
-        }
-        .container1 .box .box-cell.box1 {
-
-         }
-        .container1 .box .box-cell.box2 {
-        }
-
-    .main-container {
-
-        display: block;
-        background-color: white;
-        text-align: center;
+header {
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
     }
-    .container_a {
-
-        display: inline-block;
-        background-color: blueviolet;
-        text-align: center;
-        padding-top: 10px;
+nav {
+    background-color: #f4f4f4;
+    padding: 0.5rem;
+    text-align: center;
     }
-    .container_b {
-
-        display: inline-block;
-        text-align: center;
-        padding-top: 10px;
+nav a {
+    color: #000;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
     }
-    .container_r {
-
-        display: inline-block;
-        text-align: center;
-        padding-top: 10px;
+nav a:hover {
+    background-color: #007bff;
+    color: #fff;
     }
-    .r_corner {
-
-        display: inline;
-        float: right;
-        text-align: center;
-        padding-top: 10px;
+section {
+    padding: 2rem;
     }
-
-    .image {
-        display: block;
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
     }
+#myDIV {
+  width: 50%;
+  padding: 50px 50px;
+  text-align: center;
+  background-color: lightblue;
+  margin-top: 20px;
+  margin: auto;
+  display: none;
+    }
+.container {
+    margin: 2rem auto;
+    max-width: 800px;
+    padding: 2rem;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+#mydiv1 {
+    margin-left: 50px;
+    }
+.container1 .box {
+      position: relative;
+      display : flex;
+      flex-direction : row;
+      left : 0px;
+    }
+.main-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-row: repeat(2, 1fr)
+    }
+.container_a {
+    margin: 1em;
+    width: 500px;
+    }
+.r_corner {
+    display: flex;
+    float: right;
+    text-align: center;
+    align-items: center;
+    }
+.bg_video {
+    height: 30vh;
+    width: 100%;
+    position: relative;
+}
+.bg_video video {
+    height: 30vh;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+}
