@@ -189,31 +189,28 @@ def borrow():
     student = ""
     book_copies = ""
 
-    if request.method == "GET":
+    if request.method == "GET" and "title" in request.args:
         title = request.args.get("title")
-        print("Title : ", title)
+        book = Library.select_book(title)
+        if book:
+            book_copies = Library.select_get_book_copies(book.id)
+            print("Book Copies : ", book_copies)
 
+    if request.method == "GET" and ("student_fname" and "student_lname" in request.args):
         student_first_name = request.args.get("student_fname")
         student_last_name = request.args.get("student_lname")
+        student = Students.select_student(student_first_name, student_last_name)
 
-        if student_first_name and student_last_name:
-            print("Student F.name : ", student_first_name)
-            print("Student L.name : ", student_last_name)
-            student = Students.select_student(student_first_name, student_last_name)
-            print("Student : ", student)
-        if title:
-            print("Title : ", title)
-            book = Library.select_book(title)
-            if book:
-                book_copies = Library.select_get_book_copies(book.id)
-                print("Book Copies : ", book_copies)
-
-    if request.method == "POST":
+    if request.method == "POST" and ("bookcopies_id" and "student_id" in request.form):
         bookcopies_id = request.form["bookcopies_id"]
         student_id = request.form["student_id"]
+        Library.sign_to(bookcopies_id, student_id)
 
-        if bookcopies_id and student_id:
-            Library.sign_to(bookcopies_id, student_id)
+    if request.method == "POST" and ("return_bookcopies_id" and "return_student_id" in request.form):
+        return_book_id = request.form["return_bookcopies_id"]
+        return_student_id = request.form["return_student_id"]
+        print(return_book_id, return_student_id)
+        Library.return_bookcopy(return_book_id, return_student_id)
 
     return render_template("borrow.html", student=student, book_copies=book_copies)
 
