@@ -150,6 +150,14 @@ class Library:
             result = session.scalars(taken_book).fetchall()
         return result
 
+    @classmethod
+    def return_bookcopy(cls, book_copies_id, student_id):
+        db_session = sessionmaker(bind=engine)
+        borrow_sessions = db_session()
+        entity_del = borrow_sessions.query(BorrowsModel).where(BorrowsModel.book_copies_id == book_copies_id and
+                                                               BorrowsModel.student_id == student_id).first()
+        borrow_sessions.delete(entity_del)
+        borrow_sessions.commit()
 
 class Students:
     @classmethod
@@ -184,3 +192,4 @@ class Students:
         student_del = student_sessions.query(StudentModel).get(int(student_id))
         student_sessions.delete(student_del)
         student_sessions.commit()
+
