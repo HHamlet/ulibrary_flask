@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="main-container">
+<div class="main-container1">
     <div class="container_a">
         <h2> Book Ditail </h2>
           <h3> ID: {{book.book.id}} </h3>
@@ -21,17 +21,18 @@
               {% endfor%}
 
             </ul>
-            <a href="#" class="btn btn-primary" style="margin-left: 0px">Sign book to</a>
+            <a href="/borrow" class="btn btn-primary" style="margin-left: 0px">Sign book to</a>
             <h4> Copies : {{copies_count}}</h4>
             </div>
         {%endif%}
     </div>
-    <div>
+    <div class="container_a">
         <img  src="{{ img_url }}" alt="Your Image">
     </div>
+    <div class="container_a">
+        {{author_bio}}
+    </div>
 </div>
-
-
 
 <div>
   <br>

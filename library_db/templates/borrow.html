@@ -3,6 +3,14 @@
 {% set page_title = "Borrow" %}
 
 {% block content %}
+ <style>
+body {
+      background-image: url(/static/picture/tan_bg_br.jpg);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+       }
+</style>
 <section>
     <div class="main-container">
 
@@ -82,7 +90,7 @@
 
         <div class="container_a">
             <form method="POST" id="form4">
-                <label for="return_bookcopies_id" class="form-label">Return Book ftom...</label>
+                <label for="return_bookcopies_id" class="form-label">Return Book from...</label>
                 <input type="text"
                        class="form-control"
                        id="return_bookcopies_id"

@@ -5,91 +5,90 @@
 
 {% block content %}
 
-<h1>Registration Form for Admin user</h1>
-
 <form method="POST"  >
-    {{ form.csrf_token }}
-    <div class="mb-3" style="width: 400px;">
-        <label for="username" class="form-label">Username: </label>
-        <input type="text"
-               class="form-control"
-               {% if form.username.data %}
-                value="{{ form.username.data }}"
-               {% endif %}
-               id="username"
-               name="username"
-               required
-        >
-        {{ error_display(form.username.errors) }}
-    </div>
+    <div class="container">
+        <h1>Registration Form for Admin user</h1>
+        {{ form.csrf_token }}
+        <div class="container_a">
+            <label for="username" class="form-label">Username: </label>
+            <input type="text"
+                   class="form-control"
+                   {% if form.username.data %}
+                    value="{{ form.username.data }}"
+                   {% endif %}
+                   id="username"
+                   name="username"
+                   required
+            >
+            {{ error_display(form.username.errors) }}
+        </div>
 
-    <div class="mb-3" style="width: 400px;">
-        <label for="user_name" class="form-label">Name: </label>
-        <input type="text"
-               class="form-control"
-               {% if form.user_name.data %}
-                value="{{ form.user_name.data }}"
-               {% endif %}
-               id="user_name"
-               name="user_name"
-               required
-        >
-        {{ error_display(form.user_name.errors) }}
-    </div>
-    <div class="mb-3" style="width: 400px;">
-        <label for="user_lastname" class="form-label">Last name: </label>
-        <input type="text"
-               class="form-control"
-               {% if form.user_lastname.data %}
-                value="{{ form.user_lastname.data }}"
-               {% endif %}
-               id="user_lastname"
-               name="user_lastname"
+        <div class="container_a">
+            <label for="user_name" class="form-label">Name: </label>
+            <input type="text"
+                   class="form-control"
+                   {% if form.user_name.data %}
+                    value="{{ form.user_name.data }}"
+                   {% endif %}
+                   id="user_name"
+                   name="user_name"
+                   required
+            >
+            {{ error_display(form.user_name.errors) }}
+        </div>
+        <div class="container_a">
+            <label for="user_lastname" class="form-label">Last name: </label>
+            <input type="text"
+                   class="form-control"
+                   {% if form.user_lastname.data %}
+                    value="{{ form.user_lastname.data }}"
+                   {% endif %}
+                   id="user_lastname"
+                   name="user_lastname"
 
-        >
+            >
+        </div>
+        <div class="container_a">
+            <label for="email" class="form-label">Email: </label>
+            <input type="email"
+                   class="form-control"
+                   {% if form.email.data %}
+                    value="{{ form.email.data }}"
+                   {% endif %}
+                   id="email"
+                   name="email"
+                   required
+            >
+            {{ error_display(form.email.errors) }}
+        </div>
+        <div class="container_a">
+            <label for="password" class="form-label">Password: </label>
+            <input type="password"
+                   class="form-control"
+                   {% if form.password.data %}
+                    value="{{ form.password.data }}"
+                   {% endif %}
+                   id="password"
+                   name="password"
+                   required
+            >
+            {{ error_display(form.password.errors) }}
+        </div>
+        <div class="container_a">
+            <label for="repeat_password" class="form-label">Repeat password: </label>
+            <input type="password"
+                   class="form-control"
+                   {% if form.repeat_password.data %}
+                    value="{{ form.repeat_password.data }}"
+                   {% endif %}
+                   id="repeat_password"
+                   name="repeat_password"
+                   required
+            >
+            {{ error_display(form.repeat_password.errors) }}
+        </div>
+        <input class="btn btn-success" type="submit" value="Register">
     </div>
-    <div class="mb-3" style="width: 400px;">
-        <label for="email" class="form-label">Email: </label>
-        <input type="email"
-               class="form-control"
-               {% if form.email.data %}
-                value="{{ form.email.data }}"
-               {% endif %}
-               id="email"
-               name="email"
-               required
-        >
-        {{ error_display(form.email.errors) }}
-    </div>
-    <div class="mb-3" style="width: 400px;">
-        <label for="password" class="form-label">Password: </label>
-        <input type="password"
-               class="form-control"
-               {% if form.password.data %}
-                value="{{ form.password.data }}"
-               {% endif %}
-               id="password"
-               name="password"
-               required
-        >
-        {{ error_display(form.password.errors) }}
-    </div>
-    <div class="mb-3" style="width: 400px;">
-        <label for="repeat_password" class="form-label">Repeat password: </label>
-        <input type="password"
-               class="form-control"
-               {% if form.repeat_password.data %}
-                value="{{ form.repeat_password.data }}"
-               {% endif %}
-               id="repeat_password"
-               name="repeat_password"
-               required
-        >
-        {{ error_display(form.repeat_password.errors) }}
-    </div>
-    <input class="btn btn-success" type="submit" value="Register">
 </form>
-
-
 
 {% endblock %}

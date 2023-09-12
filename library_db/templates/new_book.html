@@ -1,22 +1,11 @@
 {% extends "base.html" %}
-
+{% from "macros.html" import error_display with context %}
 {% set page_title = "new* book/ add book" %}
 
 {% block content %}
 <h1> Add/New Book</h1>
-<style>
-    form {
-    width:500px;
-    border:2px solid ;
-    margin:10px;
-    padding: 5px 50px;
-    background: #F5F5F5;
-    }
 
-</style>
-
-
-<form method="POST">
+<form class="new_book" method="POST">
     {{ form.csrf_token }}
     <div class="mb-3" style="width: 400px">
         <label for="Book-Title" class="form-label">Book Title </label>
@@ -30,54 +19,74 @@
                placeholder="book title"
                required
         >
-<!--        <div id="book-title-help" class="form-text">Book full name/title</div>-->
+        {{ error_display(form.book_title.errors) }}
     </div>
     <div class="mb-3" style="width: 400px">
         <label for="author-name#1" class="form-label">Author Name </label>
         <input type="text"
                class="form-control"
+               {% if form.author_first_name.data %}
+                value="{{ form.book_title.data }}"
+               {% endif %}
                id="author-name#1"
                name="author_first_name"
                placeholder="first name"
         >
+        {{ error_display(form.author_first_name.errors) }}
     </div>
     <div class="mb-3" style="width: 400px">
         <label for="author-name#2" class="form-label">Author Name </label>
         <input type="text"
                class="form-control"
+               {% if form.author_last_name.data %}
+                value="{{ form.book_title.data }}"
+               {% endif %}
                id="author-name#2"
                name="author_last_name"
                placeholder="last name"
         >
+        {{ error_display(form.author_last_name.errors) }}
     </div>
     <div class="mb-3" style="width: 400px">
         <label for="first-published-year" class="form-label">First published year </label>
         <input type="number"
                class="form-control"
+               {% if form.first_published_year.data %}
+                value="{{ form.book_title.data }}"
+               {% endif %}
                id="first-published-year"
                name="first_published_year"
                placeholder="First published year"
                step="1"
         >
+        {{ error_display(form.first_published_year.errors) }}
     </div>
      <div class="mb-3" style="width: 400px">
         <label for="isbn" class="form-label">ISBN </label>
         <input type="text"
+               {% if form.isbn.data %}
+                value="{{ form.book_title.data }}"
+               {% endif %}
                class="form-control"
                id="isbn"
                name="isbn"
                placeholder="isbn"
         >
+         {{ error_display(form.isbn.errors) }}
     </div>
     <div class="mb-3" style="width: 400px">
         <label for="published-year" class="form-label">published year </label>
         <input type="number"
                class="form-control"
+               {% if form.published_year.data %}
+                value="{{ form.book_title.data }}"
+               {% endif %}
                id="published-year"
                name="published_year"
                placeholder="published year"
                step="1"
         >
+        {{ error_display(form.published_year.errors) }}
     </div>
     <br>
     <input class="btn btn-success" type="submit" value="Add Book">

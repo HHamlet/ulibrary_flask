@@ -8,6 +8,15 @@
   <h3> First name:  {{student.first_name}} </h3>
   <h3> Last name:  {{student.last_name}}</h3>
   <h3> Email:  {{student.email}} </h3>
+  <ul>
+      {%if borrow_ditail%}
+        {%for book in borrow_ditail%}
+          id: {{ book.book_copies.book.id}} title: {{book.book_copies.book.title }}
+                    Taken : {{book.borrowed_data}}  Should return : {{book.return_data}}
+        {%endfor%}
+      {%endif%}
+
+  </ul>
   <div>
     <br>
   </div>
