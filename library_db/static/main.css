@@ -64,6 +64,11 @@ footer {
     grid-template-columns: repeat(2, 1fr);
     grid-template-row: repeat(2, 1fr)
     }
+.main-container1 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-row: repeat(3, 1fr)
+    }
 .container_a {
     margin: 1em;
     width: 500px;
@@ -87,3 +92,10 @@ footer {
     left: 0;
     object-fit: cover;
 }
+.new_book {
+    width:500px;
+    border:2px solid ;
+    margin:10px;
+    padding: 5px 50px;
+    background: #F5F5F5;
+    }
