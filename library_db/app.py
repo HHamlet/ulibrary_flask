@@ -3,11 +3,12 @@ from sqlalchemy import select
 from db import engine
 from flask import Flask, render_template, redirect, request, url_for, session
 from library import Library, Students
-from models import BookModel, BookAuthorModel, UserModel, StudentModel, Book_CopiesModel, BorrowsModel
+from models import BookAuthorModel, UserModel, StudentModel, Book_CopiesModel, BorrowsModel
 from forms import CreateBookForm, LoginForm, AdminRegisterForm, StudentRegisterForm
 from login import login_required
 import requests
 import math
+import wikipedia
 
 app = Flask(__name__, static_folder="static")
 app.config.from_object("config.AppConfig")
@@ -37,7 +38,6 @@ def about():
 @app.route("/books")
 def list_book():
     item_per_page = 10
-
     page_number = int(request.args.get("page", 1))
     offset = (page_number - 1) * item_per_page
     total_pages = math.ceil(len(Session(engine).scalars(select(BookAuthorModel)).all()) / item_per_page)
@@ -52,17 +52,30 @@ def book_ditail(book_id):
     book_copy_data = Library.select_get_book_copies(book_id)
     copies_count = Session(engine).query(Book_CopiesModel).where(Book_CopiesModel.book_id == book_id).count()
     name = book_data.author.first_name + " " + book_data.author.last_name
-    print(name)
-    r1 = requests.get(f'https://openlibrary.org/search/authors.json?q={name}')
-    key = r1.json()["docs"][0]["key"]
-    author_bio = ""
-    r2 = requests.get(f'https://openlibrary.org/authors/{key}.json')
-    if r2.json().get("bio"):
-        if isinstance(r2.json().get("bio"), dict):
-            if r2.json()["bio"].get("value"):
-                author_bio = r2.json()["bio"].get("value")
-        else:
-            author_bio = r2.json().get("bio")
+    # r1 = requests.get(f'https://openlibrary.org/search/authors.json?q={name}')
+    # key = r1.json()["docs"][0]["key"]
+    # author_bio = ""
+    # r2 = requests.get(f'https://openlibrary.org/authors/{key}.json')
+    # if r2.json().get("bio"):
+    #     if isinstance(r2.json().get("bio"), dict):
+    #         if r2.json()["bio"].get("value"):
+    #             author_bio = r2.json()["bio"].get("value")
+    #     else:
+    #         author_bio = r2.json().get("bio")
+    try:
+        wiki_author_data = wikipedia.summary(name)
+        author_url = wikipedia.page(name).url
+    except KeyError:
+        wiki_author_data = ""
+        author_url = ""
+    except wikipedia.exceptions.PageError:
+        try:
+            name = book_data.author.last_name + " " + book_data.author.first_name
+            wiki_author_data = wikipedia.summary(name)
+            author_url = wikipedia.page(name).url
+        except wikipedia.exceptions.PageError:
+            wiki_author_data = ""
+            author_url = ""
 
     for el in book_copy_data:
         r = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={[el.isbn]}'
@@ -70,8 +83,15 @@ def book_ditail(book_id):
         description_by_api = r.json()["items"][0]
         img_url = url_for('static', filename=f'/picture/id_{book_id}.jpeg')
 
-        return render_template("book_ditail.html", book=book_data, img_url=img_url, book_copy_data=book_copy_data,
-                               description=description_by_api, copies_count=copies_count, author_bio=author_bio)
+        return render_template("book_ditail.html",
+                               book=book_data,
+                               img_url=img_url,
+                               book_copy_data=book_copy_data,
+                               description=description_by_api,
+                               copies_count=copies_count,
+                               author_bio=wiki_author_data,
+                               author_url=author_url
+                               )
 
 
 @app.route("/books/add_new", methods=["GET", "POST"])
@@ -128,9 +148,14 @@ def list_students():
 @app.route("/students/<student_id>", methods=["GET", "POST"])
 @login_required
 def student_ditail(student_id):
+    not_return_intime = []
     student = Session(engine).query(StudentModel).get(int(student_id))
     borrow_ditail = Session(engine).scalars(
         select(BorrowsModel).where(BorrowsModel.student_id == student_id)).fetchall()
+    for data in borrow_ditail:
+        if Library.check_return_data(data.id) is False:
+            not_return_intime.append(data)
+
     if request.method == "POST":
         if request.form.get("change"):
             return redirect(url_for(".update_form", student_id=student.id))
@@ -138,7 +163,10 @@ def student_ditail(student_id):
             Students.delete_student_entity(student_id)
             return redirect("/students")
 
-    return render_template("student_ditail.html", student=student, borrow_ditail=borrow_ditail)
+    return render_template("student_ditail.html",
+                           student=student,
+                           borrow_ditail=borrow_ditail,
+                           not_return_intime=not_return_intime)
 
 
 @app.route('/update-form')
@@ -202,13 +230,16 @@ def logout():
 def borrow():
     student = ""
     book_copies = ""
-
+    books_taken = []
     if request.method == "GET" and "title" in request.args:
         title = request.args.get("title")
         book = Library.select_book(title)
         if book:
             book_copies = Library.select_get_book_copies(book.id)
             print("Book Copies : ", book_copies)
+            for data in book_copies:
+                if Library.check_book_in_borrow_table(data.id):
+                    books_taken.append(data)
 
     if request.method == "GET" and ("student_fname" and "student_lname" in request.args):
         student_first_name = request.args.get("student_fname")
@@ -226,7 +257,11 @@ def borrow():
         print(return_book_id, return_student_id)
         Library.return_bookcopy(return_book_id, return_student_id)
 
-    return render_template("borrow.html", student=student, book_copies=book_copies)
+    return render_template("borrow.html",
+                           student=student,
+                           book_copies=book_copies,
+                           books_taken=books_taken
+                           )
 
 
 if __name__ == "__main__":
