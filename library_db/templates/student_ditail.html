@@ -11,9 +11,13 @@
   <ul>
       {%if borrow_ditail%}
         {%for book in borrow_ditail%}
-          id: {{ book.book_copies.book.id}} title: {{book.book_copies.book.title }}
-                    Taken : {{book.borrowed_data}}  Should return : {{book.return_data}}
-        {%endfor%}
+          id: {{ book.book_copies.id}} title: {{book.book_copies.book.title }}
+                    Taken : {{book.borrowed_data}}  Should return :{% if book in not_return_intime %}
+                                                                      <span style="background-color:red;">{{book.return_data}}</span>
+                                                                   {% else %}
+                                                                      {{book.return_data}}
+                                                                   {%endif%}
+      {%endfor%}
       {%endif%}
 
   </ul>

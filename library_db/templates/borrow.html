@@ -55,9 +55,15 @@ body {
         <div class="container_a">
             {%if book_copies%}
                 {%for book_c in book_copies%}
-                    <h6>Book copies id: {{book_c.id}}</h6>
-                    <h6>Book copies ISBN: {{book_c.isbn}}</h6>
-                    <h6>Book copies title: {{book_c.book.title}}</h6>
+                    {% if book_c in books_taken%}
+                        <h6>Book copies id: <span style="background-color:red;">{{book_c.id}}</span></h6>
+                        <h6>Book copies ISBN: {{book_c.isbn}}</h6>
+                        <h6>Book copies title: {{book_c.book.title}}</h6>
+                    {% else %}
+                        <h6>Book copies id: {{book_c.id}}</h6>
+                        <h6>Book copies ISBN: {{book_c.isbn}}</h6>
+                        <h6>Book copies title: {{book_c.book.title}}</h6>
+                    {% endif %}
                 {%endfor%}
             {%endif%}
         </div>
