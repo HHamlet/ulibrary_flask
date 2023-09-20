@@ -103,14 +103,6 @@ class Library:
                 print(statement_book_copies, "4")
 
     @classmethod
-    def del_db(cls):
-        pass
-
-    @classmethod
-    def update_entity(cls):
-        pass
-
-    @classmethod
     def sign_to(cls, bookcopiesid, studentid):
         book = None
         student = None
@@ -123,8 +115,10 @@ class Library:
             with Session(engine, expire_on_commit=False) as session:
                 book_to_sign = session.scalars(book).first()
                 sign_to_student = session.scalars(student).first()
-                statement_borrow = BorrowsModel(book_copies_id=book_to_sign.id, student_id=sign_to_student.id,
-                                                borrowed_data=datetime.date.today())
+                statement_borrow = BorrowsModel(book_copies_id=book_to_sign.id,
+                                                student_id=sign_to_student.id,
+                                                borrowed_data=datetime.date.today()
+                                                )
                 statement_borrow.return_data = statement_borrow.borrowed_data + datetime.timedelta(14)
                 session.add(statement_borrow)
                 session.commit()
@@ -144,6 +138,22 @@ class Library:
         return False
 
     @staticmethod
+    def check_return_data(borrow_id):
+        time_delta = datetime.timedelta(days=14)
+        statement = select(BorrowsModel).where(BorrowsModel.id == borrow_id)
+        with Session(engine, expire_on_commit=False) as session:
+            result = session.scalars(statement).first()
+        print(type(result.return_data), result.return_data)
+        delta = datetime.date.today() - result.borrowed_data
+        print(type(delta), delta)
+        if delta < time_delta:
+            print(time_delta - delta, "days remain...")
+            return True
+        else:
+            print(abs(time_delta - delta), "days left...")
+            return False
+
+    @staticmethod
     def student_taken_book(student_id):
         taken_book = select(BorrowsModel).where(BorrowsModel.student_id == student_id)
         with Session(engine, expire_on_commit=False) as session:
@@ -158,6 +168,7 @@ class Library:
                                                                BorrowsModel.student_id == student_id).first()
         borrow_sessions.delete(entity_del)
         borrow_sessions.commit()
+
 
 class Students:
     @classmethod
@@ -192,4 +203,3 @@ class Students:
         student_del = student_sessions.query(StudentModel).get(int(student_id))
         student_sessions.delete(student_del)
         student_sessions.commit()
-
